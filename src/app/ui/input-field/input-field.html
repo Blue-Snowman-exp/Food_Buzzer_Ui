@@ -1,0 +1,12 @@
+<label *ngIf="label" [for]="id" class="block font-medium text-neutral-700">{{ label }}</label>
+<input
+  [type]="type"
+  [value]="value"
+  [disabled]="disabled"
+  (input)="handleInput($event)"
+  (blur)="handleBlur()"
+  [placeholder]="placeholder"
+  [name]="name"
+  [id]="id"
+  class="bg-bg-sec border border-slate-200 p-2 py-3 my-2 rounded-lg w-full"
+/>

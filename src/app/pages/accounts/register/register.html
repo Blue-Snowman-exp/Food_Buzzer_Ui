@@ -1,0 +1,212 @@
+<accounts-container>
+  @if (currentStep() != 3) {
+    <ng-content title>
+      <p class="text-neutral-500 text-lg">start your journey with</p>
+      <app-logo></app-logo>
+    </ng-content>
+  }
+  <ng-container [ngSwitch]="currentStep()">
+    <!-- STEP 1 -->
+    @if (currentStep() != 3) {
+      <ng-content step>
+        <h2 class="text-neutral-700 text-xl font-semibold mt-6">Step {{ currentStep() }}</h2>
+      </ng-content>
+    }
+    <form *ngSwitchCase="1" [formGroup]="step1form" (ngSubmit)="submitForm1()" class="mt-2">
+      <div>
+        <input-field
+          label="Name"
+          type="text"
+          formControlName="name"
+          placeholder="Enter your full name"
+        >
+        </input-field>
+
+        <p
+          *ngIf="step1form.get('name')?.touched && step1form.get('name')?.errors?.['required']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Name is required
+        </p>
+        <p
+          *ngIf="step1form.get('name')?.touched && step1form.get('name')?.errors?.['pattern']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Name must contain only letters and spaces
+        </p>
+      </div>
+
+      <div>
+        <input-field
+          label="Email"
+          type="email"
+          formControlName="email"
+          placeholder="Enter your email"
+        >
+        </input-field>
+
+        <p
+          *ngIf="step1form.get('email')?.touched && step1form.get('email')?.invalid"
+          class="text-red-500 text-sm mt-1"
+        >
+          Enter a valid email address
+        </p>
+      </div>
+
+      <div>
+        <input-field
+          label="Password"
+          type="password"
+          formControlName="password"
+          placeholder="Enter password (min 6 characters)"
+        >
+        </input-field>
+
+        <p
+          *ngIf="step1form.get('password')?.touched && step1form.get('password')?.invalid"
+          class="text-red-500 text-sm mt-1"
+        >
+          Password must be at least 6 characters
+        </p>
+      </div>
+
+      <ui-button
+        text="Continue"
+        type="submit"
+        variant="primary-full"
+        [disabled]="step1form.invalid"
+        radius="xl"
+      >
+      </ui-button>
+      <div class="text-center mt-4">
+        <p class="text-neutral-500">
+          Already have an account? <a routerLink="/accounts/login" class="text-primary">Login</a>
+        </p>
+      </div>
+    </form>
+
+    <!-- STEP 2 -->
+    <div *ngSwitchCase="2" class="space-y-4">
+      <form [formGroup]="step2form" (ngSubmit)="submitForm2()" class="mt-2">
+        <input-field
+          label="Restaurant Name"
+          type="text"
+          formControlName="rest_name"
+          placeholder="Enter restaurant name"
+        ></input-field>
+        <p
+          *ngIf="
+            step2form.get('rest_name')?.touched && step2form.get('rest_name')?.errors?.['required']
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          Restaurant name is required
+        </p>
+        <input-field
+          label="Restaurant Address"
+          type="text"
+          formControlName="rest_address"
+          placeholder="Enter restaurant address"
+        ></input-field>
+        <p
+          *ngIf="
+            step2form.get('rest_address')?.touched &&
+            step2form.get('rest_address')?.errors?.['required']
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          Address is required
+        </p>
+        <input-field
+          label="GST Number"
+          type="text"
+          formControlName="gst_number"
+          placeholder="Enter GST number"
+        ></input-field>
+        <p
+          *ngIf="
+            step2form.get('gst_number')?.touched &&
+            step2form.get('gst_number')?.errors?.['required']
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          GST is required
+        </p>
+        <div class="mb-4">
+          <input-field
+            label="Phone Number"
+            type="text"
+            formControlName="phone"
+            placeholder="Enter phone number"
+          ></input-field>
+          <p
+            *ngIf="step2form.get('phone')?.touched && step2form.get('phone')?.errors?.['required']"
+            class="text-red-500 text-sm mt-1 text-left"
+          >
+            Phone number is required
+          </p>
+          <p
+            *ngIf="step2form.get('phone')?.touched && step2form.get('phone')?.errors?.['pattern']"
+            class="text-red-500 text-sm mt-1 text-left"
+          >
+            Enter a valid 10-digit number (cannot start with 0, 91, or 123)
+          </p>
+        </div>
+
+        <div class="mb-4">
+          <input-field
+            label="Zip Code"
+            type="text"
+            formControlName="zip_code"
+            placeholder="Enter Zip Code"
+          ></input-field>
+          <p
+            *ngIf="
+              step2form.get('zip_code')?.touched && step2form.get('zip_code')?.errors?.['pattern']
+            "
+            class="text-red-500 text-sm mt-1 text-left"
+          >
+            Zip code must contain only numbers
+          </p>
+        </div>
+
+        <ui-button
+          text="Apply for verification"
+          type="submit"
+          [isLoading]="isSubmitting()"
+          [disabled]="step2form.invalid"
+          variant="primary-full"
+          radius="xl"
+        ></ui-button>
+        <p class="my-2"></p>
+      </form>
+    </div>
+    <div *ngSwitchCase="3" class="text-center space-y-4">
+      <h2 class="text-center">
+        <mat-icon style="font-size: 120px; width: 120px; height: 120px; color: rgb(0, 201, 80)">
+          check_circle
+        </mat-icon>
+      </h2>
+      <div class="w-lg mx-auto my-4">
+        <p class="font-bold text-xl">Your request has been sent for verification.</p>
+        <p class="text-neutral-500">
+          Your request has been sent to the Admin. Once approved you can start accepting orders from
+          customers.
+        </p>
+      </div>
+      <p class="my-2"></p>
+    </div>
+  </ng-container>
+
+  <!-- MESSAGE FEEDBACK -->
+  <div *ngIf="message() as msg" class="mt-4 text-center">
+    <p
+      [ngClass]="{
+        'text-green-500': msg.code === 200,
+        'text-red-500': msg.code !== 200,
+      }"
+    >
+      {{ msg.message }}
+    </p>
+  </div>
+</accounts-container>

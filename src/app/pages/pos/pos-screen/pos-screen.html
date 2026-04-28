@@ -1,0 +1,214 @@
+<div class="bg-primary text-white font-semibold w-screen px-12 py-2">
+  <a href="/orders" class="flex flex-row items-center"
+    ><mat-icon> arrow_back</mat-icon> Back to home</a
+  >
+</div>
+
+<div class="bg-white w-screen flex flex-row justify-between items-center px-12 py-4">
+  <app-logo></app-logo>
+  <app-clock></app-clock>
+</div>
+<div class="flex h-[calc(100vh-100px)] overflow-y-scroll">
+  <!-- LEFT: Product Grid -->
+  <div class="flex-1 overflow-y-auto p-6 bg-bg-sec">
+    <div class="mb-6">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="filterProducts()"
+        placeholder="Search products..."
+        class="w-full bg-white border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+      />
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div
+        *ngFor="let product of filteredProducts"
+        (click)="addToCart(product)"
+        class="bg-white rounded-xl border border-neutral-100 p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group"
+      >
+        <div class="relative mb-3">
+          <div
+            class="text-green-600 text-3xl bg-green-100 flex items-center justify-center h-28 rounded-lg"
+          >
+            {{ product.name[0] }}
+          </div>
+          <span
+            class="absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded-full"
+            [class.bg-green-100]="product.isVeg"
+            [class.text-green-700]="product.isVeg"
+            [class.bg-red-100]="!product.isVeg"
+            [class.text-red-700]="!product.isVeg"
+          >
+            {{ product.isVeg ? 'VEG' : 'NON-VEG' }}
+          </span>
+        </div>
+        <p class="font-semibold text-neutral-800 text-sm truncate">{{ product.name }}</p>
+        <p class="text-primary font-bold mt-1">₹{{ product.price }}</p>
+        <p
+          class="text-xs text-neutral-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          Tap to add
+        </p>
+      </div>
+    </div>
+
+    <div *ngIf="filteredProducts.length === 0" class="text-center py-20 text-neutral-400">
+      <p class="text-lg">No products found</p>
+    </div>
+  </div>
+
+  <!-- RIGHT: Cart Panel -->
+  <div class="w-[380px] bg-white border-l border-neutral-200 flex flex-col">
+    <!-- Cart Header -->
+    <div class="p-4 border-b border-neutral-100">
+      <div class="flex justify-between items-center">
+        <h2 class="text-lg font-bold text-neutral-800">Cart</h2>
+        <span class="text-sm text-neutral-400">{{ cart.length }} items</span>
+      </div>
+    </div>
+
+    <!-- Cart Items -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-3">
+      <div *ngIf="cart.length === 0" class="text-center py-10 text-neutral-400">
+        <p class="text-4xl mb-2">🛒</p>
+        <p class="text-sm">Add products to get started</p>
+      </div>
+
+      <div
+        *ngFor="let item of cart"
+        class="flex items-center justify-between bg-neutral-50 rounded-xl p-3"
+      >
+        <div class="flex-1 min-w-0">
+          <p class="font-medium text-sm text-neutral-800 truncate">{{ item.name }}</p>
+          <p class="text-xs text-neutral-400">₹{{ item.unitPrice }} each</p>
+        </div>
+        <div class="flex items-center gap-2 ml-3">
+          <button
+            (click)="decreaseQty(item)"
+            class="w-7 h-7 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-sm hover:bg-neutral-100 cursor-pointer"
+          >
+            −
+          </button>
+          <span class="text-sm font-semibold w-5 text-center">{{ item.quantity }}</span>
+          <button
+            (click)="increaseQty(item)"
+            class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-sm hover:opacity-90 cursor-pointer"
+          >
+            +
+          </button>
+        </div>
+        <p class="font-semibold text-sm ml-3 w-16 text-right">₹{{ item.totalPrice }}</p>
+      </div>
+    </div>
+
+    <!-- Customer Info & Checkout -->
+    <div class="border-t border-neutral-100 p-4 space-y-3" [formGroup]="checkoutForm">
+      <!-- Customer Fields -->
+      <div class="flex flex-col gap-1">
+        <input
+          formControlName="customerName"
+          placeholder="Customer Name *"
+          class="w-full bg-neutral-50 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 transition-all"
+          [ngClass]="
+            checkoutForm.get('customerName')?.invalid && checkoutForm.get('customerName')?.touched
+              ? 'border-red-400 focus:ring-red-200'
+              : 'border-neutral-200 focus:ring-primary'
+          "
+        />
+        <p
+          *ngIf="
+            checkoutForm.get('customerName')?.invalid && checkoutForm.get('customerName')?.touched
+          "
+          class="text-xs text-red-500 ml-1"
+        >
+          Name is required.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <input
+          formControlName="customerPhone"
+          placeholder="Phone Number *"
+          class="w-full bg-neutral-50 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 transition-all"
+          [ngClass]="
+            checkoutForm.get('customerPhone')?.invalid && checkoutForm.get('customerPhone')?.touched
+              ? 'border-red-400 focus:ring-red-200'
+              : 'border-neutral-200 focus:ring-primary'
+          "
+        />
+        <div
+          *ngIf="
+            checkoutForm.get('customerPhone')?.invalid && checkoutForm.get('customerPhone')?.touched
+          "
+          class="text-xs text-red-500 ml-1"
+        >
+          <p *ngIf="checkoutForm.get('customerPhone')?.errors?.['required']">Phone is required.</p>
+          <p *ngIf="checkoutForm.get('customerPhone')?.errors?.['pattern']">
+            Phone must contain only numbers.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <select
+          formControlName="tableId"
+          class="flex-1 bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+        >
+          <option value="" disabled selected>Select Table (Optional)</option>
+          <option
+            *ngFor="let table of tables"
+            [value]="table.id"
+            [disabled]="table.isOccupied"
+          >
+            Table {{ table.tableNo }} {{ table.isOccupied ? '(Occupied)' : '' }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Totals -->
+      <div class="space-y-1 pt-2 border-t border-neutral-100">
+        <div class="flex justify-between text-sm text-neutral-500">
+          <span>Subtotal</span>
+          <span>₹{{ subtotal.toFixed(2) }}</span>
+        </div>
+        <div *ngIf="discountValue > 0" class="flex justify-between text-sm text-green-600">
+          <span>Discount ({{ discountValue }}%)</span>
+          <span>-₹{{ discountAmount.toFixed(2) }}</span>
+        </div>
+        <div class="flex justify-between text-lg font-bold text-neutral-800 pt-1">
+          <span>Total</span>
+          <span>₹{{ total.toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <!-- Success/Error Messages -->
+      <div
+        *ngIf="orderSuccess()"
+        class="bg-green-50 text-green-700 text-sm p-3 rounded-lg text-center"
+      >
+        {{ orderSuccess() }}
+      </div>
+      <div *ngIf="orderError()" class="bg-red-50 text-red-600 text-sm p-3 rounded-lg text-center">
+        {{ orderError() }}
+      </div>
+
+      <!-- Place Order Button -->
+      <button
+        (click)="placeOrder()"
+        [disabled]="isPlacingOrder() || checkoutForm.invalid || cart.length === 0"
+        class="w-full py-3 rounded-xl text-white font-semibold text-base transition-all cursor-pointer hover:opacity-90 bg-primary disabled:bg-neutral-300 disabled:cursor-not-allowed"
+      >
+        {{ isPlacingOrder() ? 'Placing Order...' : 'Place Order' }}
+      </button>
+
+      <button
+        *ngIf="cart.length > 0"
+        (click)="clearCart()"
+        class="w-full py-2 text-sm text-neutral-500 hover:text-red-500 transition-colors cursor-pointer"
+      >
+        Clear Cart
+      </button>
+    </div>
+  </div>
+</div>

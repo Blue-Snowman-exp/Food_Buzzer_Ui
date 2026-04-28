@@ -1,0 +1,126 @@
+<div class="w-full">
+  <div class="bg-white rounded-2xl shadow-sm p-6 border border-neutral-100">
+    <h1 class="text-2xl mb-6 font-bold text-neutral-800">Add Raw Material</h1>
+    <form [formGroup]="productForm" (ngSubmit)="saveProduct()">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Name -->
+        <div class="flex flex-col gap-2">
+          <label for="name" class="font-medium text-neutral-700">Material Name *</label>
+          <input-field type="text" placeholder="e.g. Tomatoes" formControlName="name"></input-field>
+          <p
+            *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched"
+            class="text-xs text-red-500"
+          >
+            Material name is required.
+          </p>
+        </div>
+
+        <!-- SKU -->
+        <div class="flex flex-col gap-2">
+          <label for="sku" class="font-medium text-neutral-700">SKU</label>
+          <input-field type="text" placeholder="e.g. TOM-01" formControlName="sku"></input-field>
+        </div>
+
+        <!-- Category -->
+        <div class="flex flex-col gap-2">
+          <label for="category" class="font-medium text-neutral-700">Category *</label>
+          <select-input
+            [options]="categories"
+            placeholder="Select category"
+            formControlName="category"
+          ></select-input>
+          <p
+            *ngIf="productForm.get('category')?.invalid && productForm.get('category')?.touched"
+            class="text-xs text-red-500"
+          >
+            Category is required.
+          </p>
+        </div>
+
+        <!-- Unit -->
+        <div class="flex flex-col gap-2">
+          <label for="unit" class="font-medium text-neutral-700">Unit *</label>
+          <select-input
+            [options]="units"
+            placeholder="Select unit"
+            formControlName="unit"
+          ></select-input>
+          <p
+            *ngIf="productForm.get('unit')?.invalid && productForm.get('unit')?.touched"
+            class="text-xs text-red-500"
+          >
+            Unit is required.
+          </p>
+        </div>
+
+        <!-- Current Stock -->
+        <div class="flex flex-col gap-2">
+          <label for="currentStock" class="font-medium text-neutral-700">Current Stock *</label>
+          <input-field type="number" placeholder="0" formControlName="currentStock"></input-field>
+          <p
+            *ngIf="
+              productForm.get('currentStock')?.invalid && productForm.get('currentStock')?.touched
+            "
+            class="text-xs text-red-500"
+          >
+            <span *ngIf="productForm.get('currentStock')?.errors?.['required']"
+              >Stock is required.</span
+            >
+            <span *ngIf="productForm.get('currentStock')?.errors?.['min']"
+              >Stock must be 0 or greater.</span
+            >
+          </p>
+        </div>
+
+        <!-- Reorder Level -->
+        <div class="flex flex-col gap-2">
+          <label for="reorderLevel" class="font-medium text-neutral-700">Reorder Level</label>
+          <input-field type="number" placeholder="0" formControlName="reorderLevel"></input-field>
+        </div>
+
+        <!-- Cost Per Unit -->
+        <div class="flex flex-col gap-2">
+          <label for="costPerUnit" class="font-medium text-neutral-700">Cost Per Unit (₹)</label>
+          <input-field type="number" placeholder="0.00" formControlName="costPerUnit"></input-field>
+          <p
+            *ngIf="
+              productForm.get('costPerUnit')?.invalid && productForm.get('costPerUnit')?.touched
+            "
+            class="text-xs text-red-500"
+          >
+            Cost must be 0 or greater.
+          </p>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      @if (errorMessage()) {
+        <div
+          class="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-2"
+        >
+          <mat-icon class="text-red-500 text-sm">error_outline</mat-icon>
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-neutral-100">
+        <ui-button
+          text="Cancel"
+          radius="xl"
+          variant="secondary"
+          type="button"
+          routerLink="/inventory"
+        ></ui-button>
+        <ui-button
+          text="Add To Inventory"
+          radius="xl"
+          variant="primary"
+          type="submit"
+          [disabled]="productForm.invalid"
+          [isLoading]="isSaving()"
+        ></ui-button>
+      </div>
+    </form>
+  </div>
+</div>

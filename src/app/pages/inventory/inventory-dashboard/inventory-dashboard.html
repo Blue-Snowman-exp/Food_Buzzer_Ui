@@ -1,0 +1,57 @@
+<h1 class="text-2xl font-semibold">Inventory Dashboard</h1>
+<p class="text-neutral-500">Manage stock, raw materials, and recipe ingredients.</p>
+<br />
+<app-tiles-container [dataTiles]="dataTiles()"> </app-tiles-container>
+<div class="flex items-center gap-2 my-4">
+  <ui-button
+    text="Add Product"
+    radius="xl"
+    variant="black"
+    routerLink="/inventory/create-products"
+  ></ui-button>
+</div>
+<div class="flex items-center gap-2 my-4">
+  <ui-button
+    text="All Products"
+    radius="xl"
+    variant="primary"
+    (clicked)="getFilteredMaterials('all')"
+  ></ui-button>
+  <ui-button
+    text="Active Products"
+    radius="xl"
+    variant="primary"
+    (clicked)="getFilteredMaterials('active')"
+  ></ui-button>
+  <ui-button
+    text="Low on Stock"
+    radius="xl"
+    variant="error"
+    (clicked)="getFilteredMaterials('low_on_stock')"
+  ></ui-button>
+  <ui-button
+    text="Out of Stock"
+    radius="xl"
+    variant="error"
+    (clicked)="getFilteredMaterials('out_of_stock')"
+  ></ui-button>
+</div>
+
+<!-- Search Bar -->
+<div class="bg-white p-4 rounded-xl w-full">
+  <div class="mb-4">
+    <div class="relative w-full">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <mat-icon class="text-neutral-400 text-sm">search</mat-icon>
+      </div>
+      <input
+        type="text"
+        placeholder="Search materials by name..."
+        class="w-full pl-10 pr-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+        (input)="onSearch($event)"
+      />
+    </div>
+  </div>
+
+  <app-table [columns]="columns" [data]="tableData()"></app-table>
+</div>

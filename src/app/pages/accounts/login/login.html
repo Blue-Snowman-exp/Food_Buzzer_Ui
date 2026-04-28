@@ -1,0 +1,59 @@
+<accounts-container>
+  <ng-content title>
+    <p class="text-neutral-500 text-lg">continue with</p>
+    <app-logo></app-logo>
+  </ng-content>
+  <form [formGroup]="loginForm" (ngSubmit)="login()" class="w-full flex flex-col mt-8">
+    <div>
+      <input-field placeholder="Email" type="email" formControlName="email"></input-field>
+      <p
+        *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+        class="text-red-500 text-sm mt-1"
+      >
+        Enter a valid email address
+      </p>
+    </div>
+
+    <div class="mt-4">
+      <input-field placeholder="Password" type="password" formControlName="password"></input-field>
+      <p
+        *ngIf="
+          loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']
+        "
+        class="text-red-500 text-sm mt-1"
+      >
+        Password is required
+      </p>
+      <p
+        *ngIf="
+          loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['minlength']
+        "
+        class="text-red-500 text-sm mt-1"
+      >
+        Password must be at least 6 characters
+      </p>
+    </div>
+
+    <p *ngIf="errorMessage" class="text-red-500 text-sm mt-2 text-center">{{ errorMessage }}</p>
+
+    <p class="text-right text-sm text-primary my-2"></p>
+    <ui-button
+      text="Login"
+      type="submit"
+      variant="primary-full"
+      [isLoading]="isSubmitting()"
+      [disabled]="loginForm.invalid"
+      radius="2xl"
+    >
+    </ui-button>
+    <p class="text-center text-sm text-neutral-500 mt-2">
+      Don't have an account?
+      <a routerLink="/accounts/register" class="text-primary cursor-pointer">Register</a>
+    </p>
+    <p class="text-center text-sm text-primary mt-2">
+      <a routerLink="/accounts/forgot-password" class="text-primary cursor-pointer"
+        >Forgot Password?</a
+      >
+    </p>
+  </form>
+</accounts-container>
